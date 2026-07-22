@@ -1,0 +1,32 @@
+local ws = game:GetService("Workspace")
+local rs = game:GetService("RunService")
+
+local folder = ws:WaitForChild("Projectile")
+local execnades = {}
+
+local function checkPart(part)
+	if not part:IsA("Part") then return end
+	if part.Name ~= "GrandPiano" then return end
+	
+	part.Anchored = true
+	
+	execnades[part] = true
+end
+
+for _, obj in ipairs(folder:GetDescendants()) do
+	checkPart(obj)
+end
+
+folder.DescendantAdded:Connect(function(obj)
+	checkPart(obj)
+end)
+
+rs.Heartbeat:Connect(function()
+	for part in pairs(execnades) do
+		if part and part.Parent then
+			part.CFrame = part.CFrame + Vector3.new(0, -100, 0)
+		else
+			execnades[part] = nil
+		end
+	end
+end)
