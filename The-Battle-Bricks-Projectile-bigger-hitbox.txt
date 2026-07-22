@@ -1,0 +1,61 @@
+local MULTIPLIER = 30
+
+local function makeBigger(part)
+    if not part:IsA("BasePart") then return end
+
+    part.Size = part.Size * MULTIPLIER
+    part.CanTouch = true
+    part.CanQuery = true
+    part.CanCollide = true
+
+    -- important for consistent touch detection
+    part.Massless = true
+end
+
+local function isProjectile(obj)
+    return obj.Name == "Projectile"
+        or obj.Name == "Fireball"
+        or obj.Name == "Iceball"
+        or obj.Name == "Table"
+        or obj.Name == "RAIGTable"
+        or obj.Name == "Pellet"
+        or obj.Name == "Soccerball"
+        or obj.Name == "BigRocket"
+        or obj.Name == "Rocket"
+        or obj.Name == "Basketball"
+        or obj.Name == "Molotov"
+        or obj.Name == "Grenade"
+        or obj.Name == "Cesusbomb"
+        or obj.Name == "Cesuspot"
+        or obj.Name == "LilCesuspot"
+        or obj.Name == "Banana"
+        or obj.Name == "Pie"
+        or obj.Name == "Brew"
+        or obj.Name == "Goala"
+        or obj.Name == "Cola"
+        or obj.Name == "FireTeapot"
+        or obj.Name == "Teapot"
+end
+
+local function applyToObject(obj)
+    if isProjectile(obj) then
+        if obj:IsA("Model") then
+            for _, d in ipairs(obj:GetDescendants()) do
+                makeBigger(d)
+            end
+        else
+            makeBigger(obj)
+        end
+    end
+end
+
+-- handle existing objects
+for _, obj in ipairs(workspace:GetDescendants()) do
+    applyToObject(obj)
+end
+
+-- handle new ones
+workspace.DescendantAdded:Connect(function(obj)
+    task.wait() -- ensures properties are ready
+    applyToObject(obj)
+end)
